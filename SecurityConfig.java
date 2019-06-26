@@ -21,30 +21,29 @@ public class SecurityConfig {
 
     private static Logger log = LoggerFactory.getLogger(SecurityConfig.class);
 
-    public static String getAccessToken() throws URISyntaxException {
-
-        String subdomain = "component-test-prov2";
+    public static String getAccessToken() throws URISyntaxException
 
         try {
-            String url = "https://" + subdomain + ".authentication.sap.hana.ondemand.com" + Constants.GET_OAUTH_TOKEN_ENDPOINT_SUFFIX;
+            //Assume below api url allows POST call with urlencoded body and mentioned headers.
+            String url = "https://dummyApi.authentication.test.com" + "/oauth/token";
 
             HttpMethod method = HttpMethod.POST;
-            MultiValueMap<String, String> bodyMap = getRequestBody();
+            MultiValueMap<String, String> bodyMap = getRequestBody();//Always use multivaluemap for sending urlencoded body to any API.
             HashMap<String, Object> headersMap = getRequestHeaders();
 
-            Request<MultiValueMap<String, String>> request = new Request<>();
+            Request<MultiValueMap<String, String>> request = new Request<>(); //Wrapping our request in Request class
             request.setUri(url);
             request.setMethod(method);
             request.setBody(bodyMap);
             request.setHeaders(headersMap);
 
             log.info("Attempting api call for : " + request);
-            OAuthResponseDetail oauthResponse = routingUtil.call(request, OAuthResponseDetail.class);
+            OAuthResponseDetail oauthResponse = routingUtil.call(request, OAuthResponseDetail.class); //Output is wrapped in DTO class
             log.info("Api call for request : " + request + " completed successfully");
             log.info("Access token retrieved is: " + oauthResponse.getAccessToken());
             return oauthResponse.getAccessToken();
         } catch (RestClientException e) {
-            final String message = "Error in getting Oauth token for subdomain: " + subdomain;
+            final String message = "Error in getting Oauth token";
             log.error(message, e);
             e.printStackTrace();
 
@@ -59,7 +58,7 @@ public class SecurityConfig {
         HashMap<String, Object> headersMap = new HashMap<>();
         headersMap.put("Content-Type", "application/x-www-form-urlencoded");
         headersMap.put("Accept", "application/json;charset=utf8");
-        /*
+        /* this is also same. We can use any way to decalre headers
          * headersMap.put("Content-Type", MediaType.APPLICATION_FORM_URLENCODED); headersMap.put("Accept", MediaType.APPLICATION_JSON_UTF8);
          */
         return headersMap;
