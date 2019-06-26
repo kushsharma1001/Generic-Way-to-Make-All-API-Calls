@@ -27,22 +27,4 @@ public class TestProvisioningApplication {
         Assert.assertFalse(accessToken.isEmpty());
         Assert.assertNotNull(accessToken);
     }
-
-    @Test
-    public void testProvision() throws URISyntaxException {
-        String accessToken = SecurityConfig.getAccessToken();
-        log.info("Access Token for the tenant is: " + accessToken);
-        String provAppHostName = "it-stage-app-prov";
-        String environment_prod = "prod";
-        String provisionUrl = "https://" + provAppHostName + ".cfapps.sap.hana.ondemand.com" + "/cpi-tenant/v1.0/provision?environment=" + environment_prod;
-        URI uri = new URI(provisionUrl);
-
-        HttpHeaders requestHeaders = new HttpHeaders();
-        requestHeaders.add("Authorization", "Bearer " + accessToken.replaceAll("\r", "").replaceAll("\n", ""));
-
-        HttpEntity requestEntity = new HttpEntity(null, requestHeaders);
-        ResponseEntity<String> responseEntity = restTemplate.exchange(uri, HttpMethod.PUT, requestEntity, String.class);
-
-        Assert.assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-    }
 }
